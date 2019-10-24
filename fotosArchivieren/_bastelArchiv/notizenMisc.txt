@@ -1,0 +1,5 @@
+die Handies werden an den ACN-Laptop gestöpselt, Bilder per WLAN auf SAMBA-Share, übertragene bilder werden in einer tinyDb gelogt, damit sie nur einmal übertragen werden 
+
+siehe auch:
+- tinydb.test02.py
+- unter Shuttle/usr/home/juergen/Documents/scripts gibt es z.B. ein Script zum mounten des Raid-Volumes

@@ -1,0 +1,42 @@
+https://upload.wikimedia.org/wikipedia/commons/7/7f/Jtill.jpg
+
+git bash oder conemu
+
+ssh juergen@192.168.2.78
+
+show all drives:
+lsblk -a
+blkid
+lsblk --output NAME,FSTYPE,LABEL,UUID,MODE
+
+ziel-pfad:
+/media/juergen/6c29ff3c-93a5-42f9-b8b0-028f44c16002/backupauto$
+
+/dev/sdb4: LABEL="DatenGesichert" UUID="F25685025684C8B5" TYPE="ntfs" PARTUUID="407d58bf-04"
+
+file_system                 mount_point   				  type    options          dump     pass            
+UUID="F25685025684C8B5"     /media/shuttle/DatenGesichert ntfs    defaults         0        0
+UUID=2fc549bd-1acb-41f8-b5ba-c95b82197726 /               ext4    errors=remount-ro 0       1
+
+# /etc/fstab: static file system information.
+#
+# Use 'blkid' to print the universally unique identifier for a
+# device; this may be used with UUID= as a more robust way to name devices
+# that works even if disks are added and removed. See fstab(5).
+#
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+# / was on /dev/sdb1 during installation
+UUID=2fc549bd-1acb-41f8-b5ba-c95b82197726 /               ext4    errors=remount-ro 0       1
+
+
+/dev/sda1: LABEL="DatenUngesichert" UUID="F8F6D97BF6D93A98" TYPE="ntfs" PARTUUID="407d58bb-01"
+UUID=F8F6D97BF6D93A98       /media/shuttle/DatenUngesichert ntfs    defaults         0        0
+
+
+sudo mount -t ext3 /dev/sdd1 /media/raidusb/main
+/home/juergen/Dokumente/scripts
+
+sudo mount -t ext3 /dev/sdc1 /media/cameras/s9plusJuergens
+
+show all USB devices incl. android / samsung galaxy
+lsusb
