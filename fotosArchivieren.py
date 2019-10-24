@@ -63,9 +63,15 @@ for f in fileList:
     imgDate = ImageDate(srcDir, f)
     imgDateStr = imgDate.strftime("%Y-%m-%d %H-%M-%S-%f")
     print(imgDateStr)
-    fileNew = wrkDir + "/" + imgDateStr + fileExt
-    exists = os.path.isfile(fileNew)
-    if exists:
-        print("gibt's schon: " + fileNew)
-    else:
-        os.rename(srcDir + "/" + f, fileNew)
+    sameSecondCounter = 0
+    while True:
+        fileNew = wrkDir + "/" + imgDateStr + "." + 'sameSecondCounter' + fileExt
+        exists = os.path.isfile(fileNew)
+        if not exists:
+            break
+        else:
+            print("gibt's schon: " + fileNew)
+            sameSecondCounter += 1
+
+    os.rename(srcDir + "/" + f, fileNew)
+
