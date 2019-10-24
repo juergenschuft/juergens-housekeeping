@@ -5,6 +5,7 @@ import os
 from datetime import datetime
 from PIL import Image
 from PIL import ExifTags
+from tinydb import TinyDB, Query
 #import time
 
 def getExifData(srcDir, fn):
@@ -51,6 +52,14 @@ print("guten morgen liebe sorgen!")
 srcDir = 'lego'
 wrkDir = 'work'
 
+# cd into scripts directory
+abspath = os.path.abspath(__file__)
+dname = os.path.dirname(abspath)
+os.chdir(dname)
+
+db = TinyDB("picimport.log.json")
+
+# get list of all source files
 fileList = os.listdir(srcDir)
 fileList.sort()
 
@@ -61,11 +70,11 @@ for f in fileList:
         fileExt = ""
     print(fileExt)
     imgDate = ImageDate(srcDir, f)
-    imgDateStr = imgDate.strftime("%Y-%m-%d %H-%M-%S-%f")
+    imgDateStr = imgDate.strftime("%Y_%m_%d_%H_%M_%S_%f")
     print(imgDateStr)
     sameSecondCounter = 0
     while True:
-        fileNew = wrkDir + "/" + imgDateStr + "." + 'sameSecondCounter' + fileExt
+        fileNew = wrkDir + "/" + imgDateStr + "." + str(sameSecondCounter) + fileExt
         exists = os.path.isfile(fileNew)
         if not exists:
             break
@@ -75,3 +84,4 @@ for f in fileList:
 
     os.rename(srcDir + "/" + f, fileNew)
 
+    db.insert({'importtime':datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'),'sourceFolder': 'GalaxyA5Manja', 'sourceFile': f, 'targetFile': fileNew})
