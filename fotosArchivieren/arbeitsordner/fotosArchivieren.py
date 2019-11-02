@@ -41,21 +41,19 @@ def isFileImported(db, f, sourceFolder):
     File = Query()
     return len(db.search((File.sourceFile == f) & (File.sourceFolder == sourceFolder))) > 0
 
-# pruefen, ob work-ordner exisitert - wenn ja, mit fehler abbrechen
-# work-ordner anlegen
-# dateien aus in-odner umbenennen und in den work-ordner verschieben:
-## muster enthält nach sekunden entweder bruchteile (wenn in exif verfügbar) oder zweistellige nummerierung
-## 1. dateien mit exif-daten - siehe https://orthallelous.wordpress.com/2015/04/19/extracting-date-and-time-from-images-with-python/
-## 2. auf übrige daten (nacheinander alle bekannten) datums-muster anwenden
-# bereits existierende bilder der letzten 6 vorhandenen monate (ersten monat merken) und aus old-ordner in work-ordner verschieben & überschreiben
-# Ziel-Ordner bis zum aktuellen Datum anlegen
-# dateien ab gemerktem monat in Ziel-Ordner verschieben
-# work-ordner in "old" umbenennen
+def createFolderIfNotExists(newFolder):
+    if not os.path.exists(newFolder):
+        os.makedirs(newFolder)
+    return
+
+# es fehlt noch: die Archivierung von Filmchen
 
 print("guten morgen liebe sorgen!")
 
+dirMonthArr = ["01 Januar", "02 Februar", "03 Maerz", "04 April", "05 Mai", "06 Juni", "07 Juli", "08 August", "09 September", "10 Oktober", "11 November", "12 Dezember"]
+
 srcDir = 'GalaxyA5Manja'
-wrkDir = 'work'
+archiveDir = 'archiv'
 skpSuf = 'AlreadyImported'
 skpDir = srcDir + skpSuf
 
@@ -75,6 +73,7 @@ fileList.sort()
 
 for f in fileList:
     if isFileImported(db, f, srcDir):
+        createFolderIfNotExists(skpDir)
         os.rename(srcDir + "/" + f, skpDir + "/" + f)
         print("Die Datei >" + f + "< aus Verzeichnis >" + srcDir + "< wurde bereits in der Vergangenheit importiert und jetzt nach >" + skpDir + "< verschoben.")
         continue
@@ -87,12 +86,19 @@ for f in fileList:
     imgDateStr = imgDate.strftime("%Y_%m_%d_%H_%M_%S_%f")
     print(imgDateStr)
     
-    imgYear = imgDate.year
-    imgMonth = imgDate.month
+    dirYear = "Fotos " + str(imgDate.year)
+    
+    createFolderIfNotExists(archiveDir + "/" + dirYear)
+
+    dirMonth = dirMonthArr[imgDate.month - 1]
+
+    archiveFinalDir = archiveDir + "/" + dirYear + "/" + dirMonth
+    
+    createFolderIfNotExists(archiveFinalDir)
     
     sameSecondCounter = 0
     while True:
-        fileNew = wrkDir + "/" + imgDateStr + "." + str(sameSecondCounter) + fileExt
+        fileNew = archiveFinalDir + "/" + imgDateStr + "." + str(sameSecondCounter) + fileExt
         exists = os.path.isfile(fileNew)
         if not exists:
             break
