@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import os
+import sys
 
 from datetime import datetime
 from PIL import Image
@@ -72,21 +73,32 @@ def createFolderIfNotExists(newFolder):
         os.makedirs(newFolder)
     return
 
+def deleteFolderIfExists(folder):
+    if os.path.exists(folder):
+        print("Verzeichnis >" + folder + "< wird geloescht.")
+        shutil.rmtree(folder, ignore_errors=False)
+    return
+
 # es fehlt noch: die Archivierung von Filmchen
 
 print("guten morgen liebe sorgen!")
 
 dirMonthArr = ["01 Januar", "02 Februar", "03 Maerz", "04 April", "05 Mai", "06 Juni", "07 Juli", "08 August", "09 September", "10 Oktober", "11 November", "12 Dezember"]
 
-srcDir = 'GalaxyS9PlusJuergen'
-archiveDir = 'archiv'
-skpSuf = 'AlreadyImported'
-skpDir = srcDir + skpSuf
+srcDir = str(sys.argv[1])
+
+print("srcDir: " + srcDir)
+
+archiveDir = "/media/shuttle/DatenGesichert/private_pictures"
+skpDir = srcDir + "/AlreadyImported"
+errDir = srcDir + "/errors"
 
 # cd into scripts directory
 abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
+
+deleteFolderIfExists(skpDir)
 
 db = TinyDB("picimport.log.json")
 
