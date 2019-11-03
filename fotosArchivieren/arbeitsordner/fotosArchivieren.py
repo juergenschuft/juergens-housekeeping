@@ -23,9 +23,13 @@ def getExifData(srcDir, fn):
 def extractFileDateFromName(fn):
     # tries to parse fileName fn to dateTime
     datePatterns=["video-%Y-%m-%d-%H-%M-%S", "%Y%m%d_%H%M%S"]
+    patternLenths=[23, 13] # cut away additional chars
+    counter = 0
     for curPattern in datePatterns:
         try:
-            fileDate = datetime.strptime(fn, curPattern)
+            patternLength = patternLenths[counter]
+            counter += 1
+            fileDate = datetime.strptime(fn[:patternLength], curPattern)
         except ValueError as ve:
             print('ValueError Raised:', ve)
             continue
@@ -83,15 +87,11 @@ def deleteFolderIfExists(folder):
         shutil.rmtree(folder, ignore_errors=False)
     return
 
-# es fehlt noch: die Archivierung von Filmchen
-
-print("guten morgen liebe sorgen!")
-
 dirMonthArr = ["01 Januar", "02 Februar", "03 Maerz", "04 April", "05 Mai", "06 Juni", "07 Juli", "08 August", "09 September", "10 Oktober", "11 November", "12 Dezember"]
 
 srcDir = str(sys.argv[1])
 
-print("srcDir: " + srcDir)
+print("Auf geht's! srcDir: " + srcDir)
 
 archiveDir = "/media/shuttle/DatenGesichert/private_pictures/testArch"
 skpDir = srcDir + "/AlreadyImported"
