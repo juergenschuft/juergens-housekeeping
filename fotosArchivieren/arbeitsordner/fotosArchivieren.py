@@ -45,6 +45,9 @@ def extractImageDate(srcDir, fn):
     except AttributeError as ae:
         print('AttributeError Raised:', ae)
         return None
+    except IOError as ioe:
+        print('IOError Raised:', ioe)
+        return None
     
     for i in TTags:
         dT, sub = exif.get(i[0]), exif.get(i[1],0)
