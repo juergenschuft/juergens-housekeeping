@@ -127,7 +127,7 @@ for f in fileList:
         fileMain = f
     print(fileExt)
     imgDate = extractFileDate(srcDir, f, fileMain)
-    imgDateStr = imgDate.strftime("%Y_%m_%d_%H_%M_%S_%f")
+    imgDateStr = imgDate.strftime("%Y_%m_%d_%H_%M_%S")
     print(imgDateStr)
     
     dirYear = "Fotos " + str(imgDate.year)
