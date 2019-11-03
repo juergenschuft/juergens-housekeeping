@@ -89,7 +89,7 @@ srcDir = str(sys.argv[1])
 
 print("srcDir: " + srcDir)
 
-archiveDir = "/media/shuttle/DatenGesichert/private_pictures"
+archiveDir = "/media/shuttle/DatenGesichert/private_pictures/testArch"
 skpDir = srcDir + "/AlreadyImported"
 errDir = srcDir + "/errors"
 
