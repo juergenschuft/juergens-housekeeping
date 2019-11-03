@@ -18,13 +18,30 @@ def getExifData(srcDir, fn):
     return exifData
 
  
+def extractFileDateFromName(fn):
+    # tries to parse fileName fn to dateTime
+    datePatterns=["video-%Y-%m-%d-%H-%M-%S", "%Y%m%d_%H%M%S"]
+    for curPattern in datePatterns:
+        try:
+            fileDate = datetime.strptime(fn, curPattern)
+        except ValueError as ve:
+            print('ValueError Raised:', ve)
+            continue
+        if fileDate!=None:break#got valid time
+    return fileDate
+
 def extractImageDate(srcDir, fn):
     "Returns the date and time from image(if available)\nfrom Orthallelous"
     TTags=[('DateTimeOriginal','SubsecTimeOriginal'),#when img taken
     ('DateTimeDigitized','SubsecTimeDigitized'),#when img stored digitally
     ('DateTime','SubsecTime')]#when img file was changed
     #for subsecond prec, see doi.org/10.3189/2013JoG12J126 , sect. 2.2, 2.3
-    exif=getExifData(srcDir, fn)
+    try:
+        exif=getExifData(srcDir, fn)
+    except OSError as ose:
+        print('OSError Raised:', ose)
+        return None
+    
     for i in TTags:
         dT, sub = exif.get(i[0]), exif.get(i[1],0)
         dT = dT[0] if type(dT) == tuple else dT#PILLOW 3.0 returns tuples now
@@ -35,6 +52,12 @@ def extractImageDate(srcDir, fn):
     T=datetime.strptime('{}.{}'.format(dT,sub),'%Y:%m:%d %H:%M:%S.%f')
     #T=time.mktime(time.strptime(dT, '%Y:%m:%d %H:%M:%S')) + float('0.%s'%sub)
     return T
+
+def extractFileDate(srcDir, fn, nameMainPart):
+    fileDate = extractImageDate(srcDir, fn)
+    if fileDate!=None:return fileDate
+    fileDate = extractFileDateFromName(nameMainPart)
+    return fileDate
 
 def isFileImported(db, f, sourceFolder):
     # prueft in der Datenbank db, ob die Datei f aus dem Ordner sourceFolder bereits importiert wurde
@@ -78,11 +101,14 @@ for f in fileList:
         print("Die Datei >" + f + "< aus Verzeichnis >" + srcDir + "< wurde bereits in der Vergangenheit importiert und jetzt nach >" + skpDir + "< verschoben.")
         continue
     if "." in f:
-        fileExt = "." + f.split(".")[-1]
+        nameParts = f.split(".")
+        fileExt = "." + nameParts[-1]
+        fileMain = nameParts[0]
     else:
         fileExt = ""
+        fileMain = f
     print(fileExt)
-    imgDate = extractImageDate(srcDir, f)
+    imgDate = extractFileDate(srcDir, f, fileMain)
     imgDateStr = imgDate.strftime("%Y_%m_%d_%H_%M_%S_%f")
     print(imgDateStr)
     
