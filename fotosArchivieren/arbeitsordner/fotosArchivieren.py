@@ -19,11 +19,10 @@ def getExifData(srcDir, fn):
         exifData[decodedTag] = value
     return exifData
 
- 
 def extractFileDateFromName(fn):
     # tries to parse fileName fn to dateTime
     datePatterns=["video-%Y-%m-%d-%H-%M-%S", "%Y%m%d_%H%M%S"]
-    patternLenths=[23, 13] # cut away additional chars
+    patternLenths=[23, 15] # cut away additional chars
     counter = 0
     for curPattern in datePatterns:
         try:
@@ -89,7 +88,7 @@ def deleteFolderIfExists(folder):
 
 dirMonthArr = ["01 Januar", "02 Februar", "03 Maerz", "04 April", "05 Mai", "06 Juni", "07 Juli", "08 August", "09 September", "10 Oktober", "11 November", "12 Dezember"]
 
-srcDir = str(sys.argv[1])
+srcDir = str(sys.argv[1]) #"S9PlusJuergen"
 
 print("Auf geht's! srcDir: " + srcDir)
 
