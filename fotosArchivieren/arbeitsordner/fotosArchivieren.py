@@ -113,6 +113,8 @@ print(str(len(fileList)) + " Dateien im Quell-Verzeichnis >" + srcDir + "< gefun
 fileList.sort()
 
 for f in fileList:
+    if f == "dummy.txt":
+        continue
     if isFileImported(db, f, srcDir):
         createFolderIfNotExists(skpDir)
         os.rename(srcDir + "/" + f, skpDir + "/" + f)
