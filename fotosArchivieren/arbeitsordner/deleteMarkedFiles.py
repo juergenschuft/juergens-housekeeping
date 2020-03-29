@@ -5,7 +5,7 @@ import glob, os
 
 # ln -sfn /a/new/path curWorkDir
 
-srcDir = curWorkDir
+srcDir = "curWorkDir"
 
 print("Auf geht's! srcDir: " + srcDir)
 

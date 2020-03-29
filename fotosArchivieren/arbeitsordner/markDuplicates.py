@@ -38,7 +38,7 @@ def get_files_by_file_size(dirname, reverse=False):
 
 # ln -sfn /a/new/path curWorkDir
 
-srcDir = curWorkDir
+srcDir = "curWorkDir"
 
 print("Auf geht's! srcDir: " + srcDir)
 
