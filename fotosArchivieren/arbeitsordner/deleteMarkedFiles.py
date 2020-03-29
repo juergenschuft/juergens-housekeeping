@@ -3,7 +3,7 @@
 import os
 import glob, os
 
-# ln -sfn /a/new/path curWorkDir
+# ln -sfn '/media/shuttle/DatenGesichert/private_pictures/Fotos 2013/02 Februar' curWorkDir
 
 srcDir = "curWorkDir"
 

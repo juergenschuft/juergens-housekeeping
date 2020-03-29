@@ -75,7 +75,7 @@ for f in fileList:
         fileExt = ""
         fileMain = curFileName
     fileNew = fileMain + ".toBeDeleted" + fileExt
-    # print("die Datei " + curFileName + " wird umbenannt in  " + fileNew)
+    print("die Datei " + curFileName + " wird umbenannt in  " + fileNew)
     if os.path.exists(fileNew):
         print("Die Datei " + fileNew + " existiert bereits, deshalb wird " + curFileName + " nicht umbenannt.")
         continue
