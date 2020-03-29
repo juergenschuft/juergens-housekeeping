@@ -1,14 +1,13 @@
 #!/usr/bin/python
 
 import os
-# import sys
-# import shutil
 
-# from datetime import datetime
-# from PIL import Image
-# from PIL import ExifTags
-# from tinydb import TinyDB, Query
-#import time
+# ln -sfn /a/new/path curWorkDir
+
+# srcDir = "curWorkDir"
+srcDir = "10 Oktober"
+
+### definitionen
 
 # quelle: https://stackoverflow.com/questions/20252669/get-files-from-directory-argument-sorting-by-size
 def get_files_by_file_size(dirname, reverse=False):
@@ -19,11 +18,11 @@ def get_files_by_file_size(dirname, reverse=False):
     for basename in os.listdir(dirname):
         filename = os.path.join(dirname, basename)
         if os.path.isfile(filename):
-            filepaths.append(filename)
+            filepaths.append((filename, basename))
 
     # Re-populate list with filename, size tuples
     for i in range(len(filepaths)):
-        filepaths[i] = (filepaths[i], os.path.getsize(filepaths[i]))
+        filepaths[i] = (filepaths[i][0], os.path.getsize(filepaths[i][0]), filepaths[i][1])
 
     # Sort list by file size
     # If reverse=True sort from largest to smallest
@@ -36,9 +35,58 @@ def get_files_by_file_size(dirname, reverse=False):
 
     return filepaths
 
-# ln -sfn /a/new/path curWorkDir
+def processDir(srcDir):
+    
+    # get list of all source files
+    fileList = get_files_by_file_size(srcDir)
+    
+    nrOfFiles = len(fileList)
+    
+    # print(str(nrOfFiles) + " Dateien im Quell-Verzeichnis >" + srcDir + "< gefunden")
+    
+    if nrOfFiles < 1:
+        return nrOfFiles
+    
+    lastDir = ""
+    lastFileName = ""
+    lastFileSize = 0
+    lastFileDay = "" # 2013_01_12
+    
+    for f in fileList:
+        curFileName = f[2]
+        curFileSize = f[1]
+        curFileDay = curFileName[ 0 : 10]
+    #    print("curFileName: " + curFileName + " curFileDay: " + curFileDay)
+    #    continue
+        if (curFileSize != lastFileSize or curFileDay != lastFileDay):
+    #        print("die Dateien " + lastFileName + " und " + curFileName + " sind ungleich.")
+            lastFileName = curFileName
+            lastFileSize = curFileSize
+            lastFileDay  = curFileDay
+            continue
+    #    print("die Dateien " + lastFileName + " und " + curFileName + " sind gleich.")
+        if "." in curFileName:
+            nameParts = curFileName.split(".")
+            fileExt = "." + nameParts[-1]
+            fileMain = nameParts[0]
+        else:
+            fileExt = ""
+            fileMain = curFileName
+        fileNew = os.path.join(srcDir, fileMain + ".toBeDeleted" + fileExt)
+        fileOld = os.path.join(srcDir, curFileName)
 
-srcDir = "curWorkDir"
+        print("die Datei " + fileOld + " wird umbenannt in  " + fileNew)
+        if os.path.exists(fileNew):
+            print("Die Datei " + fileNew + " existiert bereits, deshalb wird " + fileOld + " nicht umbenannt.")
+            continue
+        os.rename(fileOld, fileNew)
+        lastFileName = curFileName
+        lastFileSize = curFileSize
+        lastFileDay  = curFileDay
+
+    return nrOfFiles
+
+### hauptprogramm
 
 print("Auf geht's! srcDir: " + srcDir)
 
@@ -46,39 +94,13 @@ print("Auf geht's! srcDir: " + srcDir)
 abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
+# os.chdir(srcDir)
 
-# deleteFolderIfExists(skpDir)
-
-# db = TinyDB("picimport.log.json")
-
-# get list of all source files
-fileList = get_files_by_file_size(srcDir)
-
-print(str(len(fileList)) + " Dateien im Quell-Verzeichnis >" + srcDir + "< gefunden")
-
-lastFileName = ""
-lastFileSize = 0
-
-for f in fileList:
-    curFileName = f[0]
-    curFileSize = f[1]
-    if curFileSize != lastFileSize:
-        lastFileName = curFileName
-        lastFileSize = curFileSize
-        continue
-    # print("die Dateien " + lastFileName + " und " + curFileName + " haben die gleiche Groesse.")
-    if "." in curFileName:
-        nameParts = curFileName.split(".")
-        fileExt = "." + nameParts[-1]
-        fileMain = nameParts[0]
-    else:
-        fileExt = ""
-        fileMain = curFileName
-    fileNew = fileMain + ".toBeDeleted" + fileExt
-    print("die Datei " + curFileName + " wird umbenannt in  " + fileNew)
-    if os.path.exists(fileNew):
-        print("Die Datei " + fileNew + " existiert bereits, deshalb wird " + curFileName + " nicht umbenannt.")
-        continue
-    os.rename(curFileName, fileNew)
-    lastFileName = curFileName
-    lastFileSize = curFileSize
+for root, dirs, files in os.walk(srcDir):
+    # print("dirs: " + str(len(dirs)))
+    for d in dirs:
+        curDir = os.path.relpath(os.path.join(root, d), dname)
+        # print("gleich: " + curDir)
+        processDir(curDir)
+        
+print("fertig")
