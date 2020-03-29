@@ -92,7 +92,7 @@ srcDir = str(sys.argv[1]) #"S9PlusJuergen"
 
 print("Auf geht's! srcDir: " + srcDir)
 
-archiveDir = "/media/shuttle/DatenGesichert/private_pictures/testArch" #"S9PlusJuergen"
+archiveDir = "/media/shuttle/DatenGesichert/private_pictures" #"S9PlusJuergen"
 skpDir = srcDir + "/AlreadyImported"
 errDir = srcDir + "/errors"
 
