@@ -19,7 +19,7 @@ os.chdir(dname)
 # db = TinyDB("picimport.log.json")
 
 # get list of all source files
-fileList = glob.glob(srcDir + "/*.toBeDeleted.*", recursive = True)
+fileList = glob.glob(srcDir + "/*.toBeDeleted.*")
 
 print(str(len(fileList)) + " Dateien im Quell-Verzeichnis >" + srcDir + "< gefunden")
 
