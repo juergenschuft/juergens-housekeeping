@@ -56,7 +56,7 @@ def processDir(srcDir):
         curFileName = f[2]
         curFileSize = f[1]
         curFileDay = curFileName[ 0 : 10]
-    #    print("curFileName: " + curFileName + " curFileDay: " + curFileDay)
+        print("curFileName: " + curFileName + " curFileSize: " + curFileSize)
     #    continue
         if (curFileSize != lastFileSize or curFileDay != lastFileDay):
     #        print("die Dateien " + lastFileName + " und " + curFileName + " sind ungleich.")
