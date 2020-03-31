@@ -56,7 +56,7 @@ def processDir(srcDir):
         curFileName = f[2]
         curFileSize = f[1]
         curFileDay = curFileName[ 0 : 10]
-        print("curFileName: " + curFileName + " curFileSize: " + str(curFileSize))
+    #    print("curFileName: " + curFileName + " curFileSize: " + str(curFileSize))
     #    continue
         if (curFileSize != lastFileSize or curFileDay != lastFileDay):
     #        print("die Dateien " + lastFileName + " und " + curFileName + " sind ungleich.")
@@ -65,14 +65,7 @@ def processDir(srcDir):
             lastFileDay  = curFileDay
             continue
     #    print("die Dateien " + lastFileName + " und " + curFileName + " sind gleich.")
-        if "." in curFileName:
-            nameParts = curFileName.split(".")
-            fileExt = "." + nameParts[-1]
-            fileMain = nameParts[0]
-        else:
-            fileExt = ""
-            fileMain = curFileName
-        fileNew = os.path.join(srcDir, fileMain + ".toBeDeleted" + fileExt)
+        fileNew = os.path.join(srcDir, curFileName + ".toBeDeleted")
         fileOld = os.path.join(srcDir, curFileName)
 
         print("die Datei " + fileOld + " wird umbenannt in  " + fileNew)
