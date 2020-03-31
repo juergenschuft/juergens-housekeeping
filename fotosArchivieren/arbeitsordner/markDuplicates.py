@@ -4,8 +4,8 @@ import os
 
 # ln -sfn /a/new/path curWorkDir
 
-# srcDir = "curWorkDir"
-srcDir = "10 Oktober"
+srcDir = "curWorkDir"
+# srcDir = "10 Oktober"
 
 ### definitionen
 
