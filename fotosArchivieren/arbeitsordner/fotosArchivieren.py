@@ -7,8 +7,13 @@ import shutil
 from datetime import datetime
 from PIL import Image
 from PIL import ExifTags
-from tinydb import TinyDB, Query
 #import time
+
+def skipFile(f, srcDir, errDir):
+    createFolderIfNotExists(errDir)
+    os.rename(srcDir + "/" + f, errDir + "/" + f)
+    print("Fuer Datei >" + f + "< aus Verzeichnis >" + srcDir + "< konnte kein Aufnahmedatum bestimmt werden. Deshalb wurde sie nach >" + errDir + "< verschoben.")
+    return
 
 def getExifData(srcDir, fn):
     exifData = {}
@@ -20,6 +25,7 @@ def getExifData(srcDir, fn):
     return exifData
 
 def extractFileDateFromName(fn):
+    fileDate = None
     # tries to parse fileName fn to dateTime
     datePatterns=["video-%Y-%m-%d-%H-%M-%S", "%Y%m%d_%H%M%S", "%Y_%m_%d_%H_%M_%S"]
     patternLenths=[23, 15, 19] # cut away additional chars
@@ -70,11 +76,6 @@ def extractFileDate(srcDir, fn, nameMainPart):
     fileDate = extractFileDateFromName(nameMainPart)
     return fileDate
 
-def isFileImported(db, f, sourceFolder):
-    # prueft in der Datenbank db, ob die Datei f aus dem Ordner sourceFolder bereits importiert wurde
-    File = Query()
-    return len(db.search((File.sourceFile == f) & (File.sourceFolder == sourceFolder))) > 0
-
 def createFolderIfNotExists(newFolder):
     if not os.path.exists(newFolder):
         os.makedirs(newFolder)
@@ -92,18 +93,23 @@ srcDir = str(sys.argv[1]) #"S9PlusJuergen"
 
 print("Auf geht's! srcDir: " + srcDir)
 
-archiveDir = "/media/shuttle/DatenGesichert/private_pictures" #"S9PlusJuergen"
-skpDir = srcDir + "/AlreadyImported"
-errDir = srcDir + "/errors"
+archiveDir = "archiv"
+skpDir = os.path.join(srcDir, "AlreadyImported")
+errDir = os.path.join(srcDir, "errors")
 
 # cd into scripts directory
 abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
 
-deleteFolderIfExists(skpDir)
+# deleteFolderIfExists(skpDir)
+if os.path.exists(skpDir):
+    print("Das Verzeichnis >" + skpDir + "< darf beim Starten des Skriptes nicht existieren.")
+    exit()
 
-db = TinyDB("picimport.log.json")
+if os.path.exists(errDir):
+    print("Das Verzeichnis >" + errDir + "< darf beim Starten des Skriptes nicht existieren.")
+    exit()
 
 # get list of all source files
 fileList = os.listdir(srcDir)
@@ -113,13 +119,11 @@ print(str(len(fileList)) + " Dateien im Quell-Verzeichnis >" + srcDir + "< gefun
 fileList.sort()
 
 for f in fileList:
-    if f == "dummy.txt":
+    if f == skpDir:
         continue
-    if isFileImported(db, f, srcDir):
-        createFolderIfNotExists(skpDir)
-        os.rename(srcDir + "/" + f, skpDir + "/" + f)
-        print("Die Datei >" + f + "< aus Verzeichnis >" + srcDir + "< wurde bereits in der Vergangenheit importiert und jetzt nach >" + skpDir + "< verschoben.")
+    if f == errDir:
         continue
+    newFileSize = os.path.getsize(os.path.join(srcDir, f))
     if "." in f:
         nameParts = f.split(".")
         fileExt = "." + nameParts[-1]
@@ -129,30 +133,41 @@ for f in fileList:
         fileMain = f
     print(fileExt)
     imgDate = extractFileDate(srcDir, f, fileMain)
+    if imgDate == None:
+        skipFile(f, srcDir, errDir)
+        continue
+    
     imgDateStr = imgDate.strftime("%Y_%m_%d_%H_%M_%S")
     print(imgDateStr)
     
     dirYear = "Fotos " + str(imgDate.year)
     
-    createFolderIfNotExists(archiveDir + "/" + dirYear)
+    createFolderIfNotExists(os.path.join(archiveDir, dirYear))
 
     dirMonth = dirMonthArr[imgDate.month - 1]
 
-    archiveFinalDir = archiveDir + "/" + dirYear + "/" + dirMonth
+    archiveFinalDir = os.path.join(archiveDir, dirYear, dirMonth) 
     
     createFolderIfNotExists(archiveFinalDir)
     
     sameSecondCounter = 0
     while True:
-        fileNew = archiveFinalDir + "/" + imgDateStr + "." + str(sameSecondCounter) + fileExt
+        skipped = False # geskipped wird, wenn die Daten mit gleichem Namen und gleicher Groesse schon existiert
+        fileNew = os.path.join(archiveFinalDir, imgDateStr + "." + str(sameSecondCounter) + fileExt)
         exists = os.path.isfile(fileNew)
         if not exists:
             break
         else:
+            existingFileSize = os.path.getsize(fileNew)
+            if existingFileSize == newFileSize:
+                createFolderIfNotExists(skpDir)
+                os.rename(os.path.join(srcDir, f), os.path.join(skpDir, f))
+                print("Die Datei >" + f + "< aus Verzeichnis >" + srcDir + "< wurde bereits in der Vergangenheit importiert und jetzt nach >" + skpDir + "< verschoben.")
+                skipped = True
+                break
             print("gibt's schon: " + fileNew)
             sameSecondCounter += 1
-
-    print("Die Datei >" + f + "< aus Verzeichnis >" + srcDir + "< wird als >" + fileNew + "< importiert.")
-    os.rename(srcDir + "/" + f, fileNew)
-
-    db.insert({'importtime':datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'),'sourceFolder': srcDir, 'sourceFile': f, 'targetFile': fileNew})
+    
+    if not skipped:
+        print("Die Datei >" + f + "< aus Verzeichnis >" + srcDir + "< wird als >" + fileNew + "< importiert.")
+        os.rename(srcDir + "/" + f, fileNew)
