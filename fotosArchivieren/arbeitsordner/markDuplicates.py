@@ -89,6 +89,17 @@ dname = os.path.dirname(abspath)
 os.chdir(dname)
 # os.chdir(srcDir)
 
+# erstmal nachgucken, ob bereits markierte daten vorhanden sind - das darf nicht sein
+counter = 0
+
+for root, dirs, filenames in os.walk(srcDir):
+    for filename in [f for f in filenames if f.endswith(".toBeDeleted")]:
+        counter = counter + 1
+
+if counter > 0:
+    print("es sind bereits bzw. noch " + str(counter) + " markierte dateien vorhanden - das darf nicht sein")
+    exit()
+
 for root, dirs, files in os.walk(srcDir):
     # print("dirs: " + str(len(dirs)))
     for d in dirs:
