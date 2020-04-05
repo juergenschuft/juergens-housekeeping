@@ -89,7 +89,7 @@ def deleteFolderIfExists(folder):
 
 dirMonthArr = ["01 Januar", "02 Februar", "03 Maerz", "04 April", "05 Mai", "06 Juni", "07 Juli", "08 August", "09 September", "10 Oktober", "11 November", "12 Dezember"]
 
-srcDir = str(sys.argv[1]) #"S9PlusJuergen"
+srcDir = "curWorkDir"
 
 print("Auf geht's! srcDir: " + srcDir)
 
@@ -170,4 +170,4 @@ for f in fileList:
     
     if not skipped:
         print("Die Datei >" + f + "< aus Verzeichnis >" + srcDir + "< wird als >" + fileNew + "< importiert.")
-        os.rename(srcDir + "/" + f, fileNew)
+        os.rename(os.path.join(srcDir, f), fileNew)
