@@ -5,7 +5,7 @@ import glob, os
 
 # ln -sfn '/media/shuttle/DatenGesichert/private_pictures/Fotos 2013/02 Februar' curWorkDir
 
-srcDir = "curWorkDir"
+srcDir = "private_pictures"
 
 print("Auf geht's! srcDir: " + srcDir)
 
