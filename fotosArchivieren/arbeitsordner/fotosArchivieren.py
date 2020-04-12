@@ -93,7 +93,7 @@ srcDir = "uploadDir" # str(sys.argv[1]) #"S9PlusJuergen"
 
 print("Auf geht's! srcDir: " + srcDir)
 
-archiveDir = "private_pictures"
+archiveDir = "archiv"
 skpDir = os.path.join(srcDir, "AlreadyImported")
 errDir = os.path.join(srcDir, "errors")
 
