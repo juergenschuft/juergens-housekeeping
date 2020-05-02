@@ -4,7 +4,7 @@ import os
 
 # ln -sfn /a/new/path curWorkDir
 
-srcDir = "private_pictures"
+srcDir = "archiv"
 # srcDir = "10 Oktober"
 
 ### definitionen
