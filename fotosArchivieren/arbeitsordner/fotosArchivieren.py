@@ -27,12 +27,7 @@ def getExifData(srcDir, fn):
 def extractFileDateFromName(fn):
     fileDate = None
     # tries to parse fileName fn to dateTime
-    datePatterns=[
-"video-%Y-%m-%d-%H-%M-%S", 
-"%Y%m%d_%H%M%S", 
-"%Y_%m_%d_%H_%M_%S", 
-"SL_MO_VID_%Y%m%d_%H%M%S", 
-"VID_%Y%m%d_%H%M%S"]
+    datePatterns=["video-%Y-%m-%d-%H-%M-%S", "%Y%m%d_%H%M%S", "%Y_%m_%d_%H_%M_%S", "SL_MO_VID_%Y%m%d_%H%M%S", "VID_%Y%m%d_%H%M%S"]
     patternLenths=[23, 15, 19, 25, 19] # cut away additional chars
     counter = 0
     for curPattern in datePatterns:
